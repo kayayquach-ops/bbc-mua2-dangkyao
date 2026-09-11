@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BBC Mùa 2 — Đăng ký đội</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --bg: #0B1220;
+    --bg-alt: #0F1830;
+    --card: #141F3A;
+    --border: #263258;
+    --orange: #FF7A29;
+    --pink: #F2A6C4;
+    --ink: #F3F5FA;
+    --ink-dim: #98A2C3;
+    --green: #45D483;
+    --red: #FF6B6B;
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: radial-gradient(1200px 600px at 20% -10%, #16224A 0%, var(--bg) 55%), var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  .wrap{ max-width: 960px; margin: 0 auto; padding: 28px 20px 80px; }
+
+  .top{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:16px;
+    padding-bottom: 22px; margin-bottom: 26px; border-bottom: 1px solid var(--border); flex-wrap:wrap;
+  }
+  .brand{ font-family:'Bebas Neue', sans-serif; letter-spacing: 1px; font-size: 46px; line-height:1; color:var(--ink); }
+  .brand span{ color: var(--orange); }
+  .brand-sub{ color: var(--ink-dim); font-size: 14px; margin-top:6px; }
+
+  .tabs{ display:flex; gap: 6px; background: var(--card); padding:4px; border-radius: 12px; border:1px solid var(--border); }
+  .tab{
+    border:none; background:transparent; color: var(--ink-dim); font: inherit; font-weight:600;
+    font-size: 14px; padding: 9px 16px; border-radius: 9px; cursor:pointer;
+  }
+  .tab.active{ background: var(--orange); color: #1A0D04; }
+
+  section{ display:none; }
+  section.active{ display:block; }
+
+  .card{ background: var(--card); border:1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 18px; }
+  .card h2{ margin: 0 0 4px; font-size: 20px; font-weight:800; }
+  .card .hint{ color: var(--ink-dim); font-size: 13.5px; margin: 0 0 18px; line-height:1.5; }
+
+  label{ display:block; font-size: 13px; color: var(--ink-dim); margin-bottom: 6px; font-weight:600; }
+  input[type=text], input[type=number], input[type=password], select{
+    width:100%; background: var(--bg-alt); border:1px solid var(--border); color: var(--ink);
+    padding: 10px 12px; border-radius: 9px; font: inherit; font-size: 14.5px; outline:none;
+  }
+  input:focus, select:focus{ border-color: var(--orange); }
+  input::placeholder{ color: #55618A; }
+
+  .field{ margin-bottom: 14px; }
+  .row2{ display:grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 620px){ .row2{ grid-template-columns: 1fr; } }
+
+  .member-entry{
+    background: var(--bg-alt); border:1px solid var(--border); border-radius: 14px;
+    padding: 18px; margin-bottom: 14px; display:grid; grid-template-columns: 84px 1fr; gap: 16px;
+  }
+  @media (max-width: 560px){ .member-entry{ grid-template-columns: 1fr; } }
+
+  .photo-box{
+    width: 84px; height: 84px; border-radius: 12px; border: 1.5px dashed var(--border);
+    background: var(--card); display:flex; align-items:center; justify-content:center; overflow:hidden;
+    cursor:pointer; position:relative; flex-shrink:0;
+  }
+  .photo-box img{ width:100%; height:100%; object-fit: cover; display:none; }
+  .photo-box .plus{ color: var(--ink-dim); font-size: 22px; }
+  .photo-box.uploading .plus{ display:none; }
+  .photo-box .spinner{
+    display:none; width:20px; height:20px; border-radius:50%; border: 2px solid var(--border);
+    border-top-color: var(--orange); animation: spin 0.8s linear infinite;
+  }
+  .photo-box.uploading .spinner{ display:block; }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  .photo-status{ font-size: 10.5px; color: var(--ink-dim); text-align:center; margin-top:4px; max-width:84px; }
+
+  .member-fields{ display:flex; flex-direction:column; gap:10px; }
+  .member-head{ display:flex; justify-content:space-between; align-items:center; }
+  .member-num{ font-family:'Bebas Neue'; font-size: 18px; color: var(--pink); letter-spacing:.5px; }
+  .remove-btn{
+    background:none; border:1px solid var(--border); color: var(--ink-dim); border-radius:8px;
+    padding: 4px 10px; font-size: 12px; cursor:pointer; font:inherit;
+  }
+  .remove-btn:hover{ border-color: var(--red); color: var(--red); }
+
+  .captain-row{ display:flex; align-items:center; gap:8px; font-size:13px; color: var(--ink-dim); }
+  .captain-row input{ width:16px; height:16px; accent-color: var(--orange); }
+
+  .add-btn{
+    width:100%; background: transparent; border: 1.5px dashed var(--border); color: var(--ink-dim);
+    padding: 12px; border-radius: 12px; font: inherit; font-weight:600; font-size: 14px; cursor:pointer;
+  }
+  .add-btn:hover{ border-color: var(--orange); color: var(--orange); }
+
+  .toggle-row{ display:flex; align-items:flex-start; gap:10px; }
+  .toggle-row input{ width:18px; height:18px; accent-color: var(--orange); margin-top:2px; flex-shrink:0; }
+
+  .submit-btn{
+    width:100%; background: var(--orange); border:none; color:#1A0D04; font: inherit;
+    font-weight:800; font-size: 16px; padding: 14px; border-radius: 12px; cursor:pointer;
+  }
+  .submit-btn:hover{ filter: brightness(1.08); }
+  .submit-btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  .banner{
+    padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight:600; margin-bottom: 18px;
+    display:none; align-items:center; gap:10px;
+  }
+  .banner.show{ display:flex; }
+  .banner.ok{ background: rgba(69,212,131,.12); border:1px solid var(--green); color: var(--green); }
+  .banner.err{ background: rgba(255,107,107,.12); border:1px solid var(--red); color: var(--red); }
+
+  /* password gate */
+  .gate{ max-width: 380px; margin: 60px auto; text-align:center; }
+  .gate h2{ margin-bottom: 8px; }
+  .gate p{ color: var(--ink-dim); font-size: 13.5px; margin-bottom:18px; }
+  .gate-error{ color: var(--red); font-size: 13px; margin-top:10px; display:none; }
+
+  /* dashboard */
+  .stat-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+  @media (max-width: 620px){ .stat-grid{ grid-template-columns: repeat(2,1fr); } }
+  .stat{ background: var(--card); border:1px solid var(--border); border-radius: 14px; padding: 16px; text-align:center; }
+  .stat .num{ font-family:'Bebas Neue'; font-size: 30px; color: var(--orange); }
+  .stat .lbl{ font-size: 12px; color: var(--ink-dim); margin-top:2px; }
+
+  .team-card{ background: var(--bg-alt); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:14px; }
+  .team-card-head{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; flex-wrap:wrap; gap:8px; }
+  .team-name{ font-size:17px; font-weight:800; }
+  .team-region{ color: var(--pink); font-size:12.5px; font-weight:700; margin-top:2px; }
+  .commit-pill{
+    font-size: 11.5px; font-weight:700; padding: 3px 10px; border-radius:999px;
+    background: rgba(69,212,131,.14); color: var(--green); border:1px solid var(--green);
+  }
+  .commit-pill.no{ background: rgba(255,107,107,.14); color: var(--red); border-color: var(--red); }
+  .member-list{ display:flex; flex-direction:column; gap:8px; }
+  .member-row{ display:flex; align-items:center; gap:12px; padding: 6px 0; border-bottom: 1px solid #1c2748; }
+  .member-row:last-child{ border-bottom:none; }
+  .member-photo{ width:40px; height:40px; border-radius:8px; object-fit:cover; background:var(--card); flex-shrink:0; }
+  .member-info{ flex:1; min-width:0; }
+  .member-name{ font-size:13.5px; font-weight:700; display:flex; align-items:center; gap:6px; }
+  .captain-badge{
+    font-size: 10px; font-weight:800; color:#1A0D04; background: var(--orange); padding: 1px 7px; border-radius:6px;
+  }
+  .member-year{ font-size:12px; color: var(--ink-dim); }
+  .empty{ text-align:center; padding: 40px 20px; color: var(--ink-dim); }
+  .loading{ text-align:center; color: var(--ink-dim); padding: 30px; font-size:14px; }
+  .refresh-btn{
+    background:none; border:1px solid var(--border); color: var(--ink-dim); border-radius:8px;
+    padding: 6px 12px; font-size: 12.5px; cursor:pointer; font:inherit;
+  }
+  .refresh-btn:hover{ color: var(--ink); border-color:#3A4B85; }
+  .table-wrap-title{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div>
+      <div class="brand">BBC <span>MÙA 2</span></div>
+      <div class="brand-sub">Đăng ký đội tham gia · 3x3 Busan</div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="dangky">Đăng ký đội</button>
+      <button class="tab" data-tab="danhsach">Danh sách đội</button>
+    </div>
+  </div>
+
+  <!-- ===== ĐĂNG KÝ ĐỘI ===== -->
+  <section id="dangky" class="active">
+    <div id="banner" class="banner"></div>
+
+    <div class="card">
+      <h2>Thông tin đội</h2>
+      <div class="row2">
+        <div class="field">
+          <label>Khu vực</label>
+          <input type="text" id="khuVuc" placeholder="VD: Busan">
+        </div>
+        <div class="field">
+          <label>Tên đội</label>
+          <input type="text" id="tenDoi" placeholder="VD: 3x3 Warriors">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Thành viên</h2>
+      <p class="hint">Điền họ tên, năm sinh và ảnh cho từng thành viên. Tick chọn 1 người làm đội trưởng.</p>
+      <div id="memberList"></div>
+      <button class="add-btn" id="addMember">+ Thêm thành viên</button>
+    </div>
+
+    <div class="card">
+      <div class="toggle-row">
+        <input type="checkbox" id="camKet">
+        <label style="margin:0;" for="camKet">Tôi cam kết tất cả thành viên trong đội đều là sinh viên hoặc cựu sinh viên.</label>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn">Gửi đăng ký đội</button>
+  </section>
+
+  <!-- ===== DANH SÁCH ĐỘI (có mật khẩu) ===== -->
+  <section id="danhsach">
+    <div id="gateView" class="gate">
+      <h2>Danh sách đội tham gia</h2>
+      <p>Nhập mật khẩu để xem thông tin tất cả các đội đã đăng ký.</p>
+      <div class="field">
+        <input type="password" id="gatePassword" placeholder="Mật khẩu">
+      </div>
+      <button class="submit-btn" id="gateSubmit">Xem danh sách</button>
+      <div class="gate-error" id="gateError">Sai mật khẩu, vui lòng thử lại.</div>
+    </div>
+
+    <div id="teamsView" style="display:none;">
+      <div id="teamsLoading" class="loading">Đang tải dữ liệu...</div>
+      <div id="teamsContent" style="display:none;">
+        <div class="stat-grid" id="teamStatGrid"></div>
+        <div class="card">
+          <div class="table-wrap-title">
+            <h2 style="margin:0;">Các đội đã đăng ký</h2>
+            <button class="refresh-btn" id="refreshTeams">↻ Làm mới</button>
+          </div>
+          <div id="teamListWrap"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxZoa3TvA-ziKHmF9JARCyQHM-FY2roqyEUYF2evZ8B1RlQMXlCjyEUQjvuQu-qAwXF/exec';
+const DASHBOARD_PASSWORD = 'bbc2026';
+const CHUNK_SIZE = 1800;
+const MAX_PHOTO_DIM = 320;
+
+let memberCount = 0;
+
+function buildMemberEntry(idx){
+  const div = document.createElement('div');
+  div.className = 'member-entry';
+  div.dataset.idx = idx;
+  div.innerHTML = `
+    <div>
+      <div class="photo-box" data-role="photobox">
+        <img data-role="preview" alt="">
+        <span class="plus">+</span>
+        <div class="spinner"></div>
+      </div>
+      <div class="photo-status" data-role="photostatus">Ảnh</div>
+      <input type="file" accept="image/*" data-role="fileinput" style="display:none;">
+    </div>
+    <div class="member-fields">
+      <div class="member-head">
+        <div class="member-num">THÀNH VIÊN #${idx + 1}</div>
+        <button class="remove-btn" data-remove="${idx}">Xoá</button>
+      </div>
+      <div class="row2">
+        <div class="field" style="margin-bottom:0;">
+          <label>Họ và tên</label>
+          <input type="text" class="f-hoten" placeholder="VD: Nguyễn Văn A">
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label>Năm sinh</label>
+          <input type="number" class="f-namsinh" placeholder="VD: 1998" min="1950" max="2015">
+        </div>
+      </div>
+      <div class="captain-row">
+        <input type="radio" name="captainRadio" class="f-captain" value="${idx}">
+        <label style="margin:0;">Đây là đội trưởng</label>
+      </div>
+    </div>
+  `;
+  return div;
+}
+
+function addMemberEntry(){
+  const list = document.getElementById('memberList');
+  const idx = memberCount++;
+  const el = buildMemberEntry(idx);
+  list.appendChild(el);
+  updateRemoveButtons();
+}
+
+function updateRemoveButtons(){
+  const entries = document.querySelectorAll('.member-entry');
+  document.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.style.display = entries.length > 1 ? 'inline-block' : 'none';
+  });
+}
+
+document.getElementById('addMember').addEventListener('click', addMemberEntry);
+addMemberEntry();
+
+document.getElementById('memberList').addEventListener('click', (e) => {
+  const photoBox = e.target.closest('[data-role="photobox"]');
+  if(photoBox){
+    const entry = photoBox.closest('.member-entry');
+    entry.querySelector('[data-role="fileinput"]').click();
+    return;
+  }
+  const removeBtn = e.target.closest('[data-remove]');
+  if(removeBtn){
+    const entry = removeBtn.closest('.member-entry');
+    if(document.querySelectorAll('.member-entry').length > 1){
+      entry.remove();
+      updateRemoveButtons();
+    }
+  }
+});
+
+document.getElementById('memberList').addEventListener('change', (e) => {
+  const fileInput = e.target.closest('[data-role="fileinput"]');
+  if(fileInput && fileInput.files && fileInput.files[0]){
+    handlePhotoSelect(fileInput.closest('.member-entry'), fileInput.files[0]);
+  }
+});
+
+function resizeImageToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if(w > h && w > MAX_PHOTO_DIM){ h = Math.round(h * MAX_PHOTO_DIM / w); w = MAX_PHOTO_DIM; }
+        else if(h > MAX_PHOTO_DIM){ w = Math.round(w * MAX_PHOTO_DIM / h); h = MAX_PHOTO_DIM; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+        resolve({ dataUrl, base64: dataUrl.split(',')[1] });
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handlePhotoSelect(entry, file){
+  const photoBox = entry.querySelector('[data-role="photobox"]');
+  const preview = entry.querySelector('[data-role="preview"]');
+  const status = entry.querySelector('[data-role="photostatus"]');
+  photoBox.classList.add('uploading');
+  status.textContent = 'Đang xử lý...';
+  entry.dataset.anhurl = '';
+
+  try{
+    const { dataUrl, base64 } = await resizeImageToBase64(file);
+    preview.src = dataUrl;
+    preview.style.display = 'block';
+    status.textContent = 'Đang tải lên...';
+
+    const uploadId = 'u' + Date.now() + Math.random().toString(36).slice(2,8);
+    const chunks = [];
+    for(let i = 0; i < base64.length; i += CHUNK_SIZE){
+      chunks.push(base64.slice(i, i + CHUNK_SIZE));
+    }
+    for(let i = 0; i < chunks.length; i++){
+      const url = APPS_SCRIPT_URL + '?action=upload_chunk&uploadId=' + uploadId + '&index=' + i + '&chunk=' + encodeURIComponent(chunks[i]);
+      const res = await fetch(url);
+      const data = await res.json();
+      if(!data.ok) throw new Error('chunk failed');
+    }
+    const finUrl = APPS_SCRIPT_URL + '?action=finalize_upload&uploadId=' + uploadId +
+      '&totalChunks=' + chunks.length + '&mimeType=image/jpeg&fileName=' + encodeURIComponent(uploadId + '.jpg');
+    const finRes = await fetch(finUrl);
+    const finData = await finRes.json();
+    if(!finData.ok) throw new Error(finData.error || 'finalize failed');
+
+    entry.dataset.anhurl = finData.url;
+    status.textContent = 'Đã tải xong ✓';
+  }catch(err){
+    status.textContent = 'Lỗi, bấm để thử lại';
+    entry.dataset.anhurl = '';
+  }finally{
+    photoBox.classList.remove('uploading');
+  }
+}
+
+// ---- tabs ----
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ---- password gate ----
+let unlocked = false;
+document.getElementById('gateSubmit').addEventListener('click', checkPassword);
+document.getElementById('gatePassword').addEventListener('keydown', (e) => { if(e.key === 'Enter') checkPassword(); });
+
+function checkPassword(){
+  const val = document.getElementById('gatePassword').value;
+  if(val === DASHBOARD_PASSWORD){
+    unlocked = true;
+    document.getElementById('gateView').style.display = 'none';
+    document.getElementById('teamsView').style.display = 'block';
+    document.getElementById('gateError').style.display = 'none';
+    loadTeams();
+  }else{
+    document.getElementById('gateError').style.display = 'block';
+  }
+}
+
+document.getElementById('refreshTeams').addEventListener('click', loadTeams);
+
+async function loadTeams(){
+  document.getElementById('teamsLoading').style.display = 'block';
+  document.getElementById('teamsContent').style.display = 'none';
+
+  let rows = [];
+  try{
+    const res = await fetch(APPS_SCRIPT_URL + '?action=list_teams&t=' + Date.now());
+    const data = await res.json();
+    if(data.ok) rows = data.rows || [];
+  }catch(e){ /* leave rows empty */ }
+
+  const byId = {};
+  rows.forEach(r => {
+    const id = r.ID;
+    if(!byId[id]){
+      byId[id] = { khuVuc: r.KhuVuc, tenDoi: r.TenDoi, camKet: r.CamKet === 'TRUE' || r.CamKet === true, members: [] };
+    }
+    byId[id].members.push({
+      hoTen: r.HoTen, namSinh: r.NamSinh,
+      laDoiTruong: r.LaDoiTruong === 'TRUE' || r.LaDoiTruong === true,
+      anhURL: r.AnhURL
+    });
+  });
+  const teams = Object.values(byId);
+
+  const totalMembers = teams.reduce((sum, t) => sum + t.members.length, 0);
+  const statGrid = document.getElementById('teamStatGrid');
+  statGrid.innerHTML = `
+    <div class="stat"><div class="num">${teams.length}</div><div class="lbl">Đội đã đăng ký</div></div>
+    <div class="stat"><div class="num">${totalMembers}</div><div class="lbl">Tổng thành viên</div></div>
+    <div class="stat"><div class="num">${teams.filter(t=>t.camKet).length}</div><div class="lbl">Đội đã cam kết</div></div>
+  `;
+
+  const wrap = document.getElementById('teamListWrap');
+  if(teams.length === 0){
+    wrap.innerHTML = '<div class="empty">Chưa có đội nào đăng ký.</div>';
+  }else{
+    wrap.innerHTML = teams.map(t => `
+      <div class="team-card">
+        <div class="team-card-head">
+          <div>
+            <div class="team-name">${escapeHtml(t.tenDoi || '(chưa đặt tên)')}</div>
+            <div class="team-region">${escapeHtml(t.khuVuc || '—')}</div>
+          </div>
+          <div class="commit-pill ${t.camKet ? '' : 'no'}">${t.camKet ? 'Đã cam kết' : 'Chưa cam kết'}</div>
+        </div>
+        <div class="member-list">
+          ${t.members.map(m => `
+            <div class="member-row">
+              <img class="member-photo" src="${m.anhURL || ''}" alt="" onerror="this.style.visibility='hidden'">
+              <div class="member-info">
+                <div class="member-name">${escapeHtml(m.hoTen || '(chưa có tên)')} ${m.laDoiTruong ? '<span class="captain-badge">ĐỘI TRƯỞNG</span>' : ''}</div>
+                <div class="member-year">Năm sinh: ${escapeHtml(m.namSinh || '—')}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('teamsLoading').style.display = 'none';
+  document.getElementById('teamsContent').style.display = 'block';
+}
+
+function escapeHtml(str){
+  if(str === undefined || str === null) return '';
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function showBanner(msg, ok){
+  const b = document.getElementById('banner');
+  b.textContent = msg;
+  b.className = 'banner show ' + (ok ? 'ok' : 'err');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ---- submit team ----
+document.getElementById('submitBtn').addEventListener('click', async () => {
+  const khuVuc = document.getElementById('khuVuc').value.trim();
+  const tenDoi = document.getElementById('tenDoi').value.trim();
+  const camKet = document.getElementById('camKet').checked;
+
+  if(!khuVuc || !tenDoi){
+    showBanner('Vui lòng điền đầy đủ Khu vực và Tên đội.', false);
+    return;
+  }
+  if(!camKet){
+    showBanner('Vui lòng tick cam kết tất cả thành viên là sinh viên/cựu sinh viên.', false);
+    return;
+  }
+
+  const entries = document.querySelectorAll('.member-entry');
+  const members = [];
+  for(const entry of entries){
+    const hoTen = entry.querySelector('.f-hoten').value.trim();
+    const namSinh = entry.querySelector('.f-namsinh').value.trim();
+    const captainRadio = entry.querySelector('.f-captain');
+    const laDoiTruong = captainRadio.checked;
+    const anhURL = entry.dataset.anhurl || '';
+    const photoBox = entry.querySelector('[data-role="photobox"]');
+
+    if(!hoTen || !namSinh){
+      showBanner('Vui lòng điền đầy đủ họ tên và năm sinh cho tất cả thành viên.', false);
+      return;
+    }
+    if(photoBox.classList.contains('uploading')){
+      showBanner('Ảnh của một thành viên đang tải lên, vui lòng chờ rồi thử lại.', false);
+      return;
+    }
+    if(!anhURL){
+      showBanner('Vui lòng thêm ảnh cho tất cả thành viên trước khi gửi.', false);
+      return;
+    }
+    members.push({ hoTen, namSinh, laDoiTruong, anhURL });
+  }
+
+  if(!members.some(m => m.laDoiTruong)){
+    showBanner('Vui lòng tick chọn 1 người làm đội trưởng.', false);
+    return;
+  }
+
+  const payload = { khuVuc, tenDoi, camKet, members };
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Đang gửi...';
+
+  try{
+    const url = APPS_SCRIPT_URL + '?action=submit_team&payload=' + encodeURIComponent(JSON.stringify(payload));
+    const res = await fetch(url);
+    const result = await res.json();
+    if(!result || !result.ok) throw new Error('save failed');
+
+    showBanner('Đã đăng ký đội thành công! Cảm ơn bạn.', true);
+    document.getElementById('khuVuc').value = '';
+    document.getElementById('tenDoi').value = '';
+    document.getElementById('camKet').checked = false;
+    document.getElementById('memberList').innerHTML = '';
+    memberCount = 0;
+    addMemberEntry();
+  }catch(err){
+    showBanner('Có lỗi khi gửi đăng ký, vui lòng thử lại.', false);
+  }finally{
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Gửi đăng ký đội';
+  }
+});
+</script>
+</body>
+</html>
